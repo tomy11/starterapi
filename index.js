@@ -1,17 +1,23 @@
-const mysql = require('mysql2');
-const connection = mysql.createConnection({
-  host: '127.0.0.1',
-  user: 'root',
-  password: '123456',
-  database: 'happyworkpro'
-})
+const express = require('express');
+const bodyParser = require('body-parser');
+const router = require('./src/router/router');
+const app = express();
+const PORT = process.env.PORT || 3000;
 
-connection.connect()
+require('dotenv').config();
 
-connection.query('SELECT * FROM jnzhr_users', (err, rows, fields) => {
-  if (err) throw err
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
 
-  console.log('The solution is: ', rows)
-})
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*')
+    res.header('Access-Control-Allow-Methods','POST, GET, PUT, PATCH, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers','Content-Type, Option, Authorization');
+    return next();
+});
 
-connection.end()
+app.use('/', router);
+
+app.listen(PORT, () => {
+    console.log(`Appication run on port ${PORT}`);
+});
